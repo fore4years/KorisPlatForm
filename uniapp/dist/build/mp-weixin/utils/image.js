@@ -1,0 +1,1 @@
+"use strict";exports.getImageUrl=t=>{if(!t)return"https://via.placeholder.com/300x200?text=No+Image";if(t.startsWith("http")||t.startsWith("https"))return t;return`http://localhost:8081/files/${t.startsWith("/")?t.slice(1):t}`};

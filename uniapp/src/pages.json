@@ -1,0 +1,82 @@
+{
+  "pages": [
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/register/register",
+      "style": {
+        "navigationBarTitleText": "注册"
+      }
+    },
+    {
+      "path": "pages/forgot-password/forgot-password",
+      "style": {
+        "navigationBarTitleText": "忘记密码"
+      }
+    },
+    {
+      "path": "pages/tenant/home",
+      "style": {
+        "navigationBarTitleText": "租户首页"
+      }
+    },
+    {
+      "path": "pages/merchant/home",
+      "style": {
+        "navigationBarTitleText": "商户首页"
+      }
+    },
+    {
+      "path": "pages/admin/home",
+      "style": {
+        "navigationBarTitleText": "管理员首页"
+      }
+    },
+    {
+      "path": "pages/merchant/generator-edit",
+      "style": {
+        "navigationBarTitleText": "设备编辑"
+      }
+    },
+    {
+      "path": "pages/generator/detail",
+      "style": {
+        "navigationBarTitleText": "设备详情"
+      }
+    },
+    {
+      "path": "pages/order/detail",
+      "style": {
+        "navigationBarTitleText": "订单详情"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "个人中心"
+      }
+    },
+    {
+      "path": "pages/cart/cart",
+      "style": {
+        "navigationBarTitleText": "购物车"
+      }
+    },
+    {
+      "path": "pages/tenant/orders",
+      "style": {
+        "navigationBarTitleText": "我的订单"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  }
+}

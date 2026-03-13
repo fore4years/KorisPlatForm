@@ -1,0 +1,1 @@
+"use strict";const s=require("../utils/request.js");exports.login=e=>s.service.post("/auth/login",e),exports.register=e=>s.service.post("/auth/register",e),exports.resetPassword=e=>s.service.post("/auth/forgot-password/reset",e),exports.sendForgotPasswordCode=e=>s.service.post("/auth/forgot-password/send-code",{phone:e});

@@ -1,0 +1,55 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.159.128:3306/generator_rental?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&allowPublicKeyRetrieval=true
+    username: root
+    password: 123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      database: 0
+      password: 2107450225
+      timeout: 3000ms
+      connect-timeout: 3000ms
+      cluster:
+        nodes:
+          - 192.168.159.128:7000
+          - 192.168.159.128:7001
+          - 192.168.159.128:7002
+          - 192.168.159.128:7003
+          - 192.168.159.128:7004
+          - 192.168.159.128:7005
+        max-redirects: 3
+      lettuce:
+        cluster:
+          refresh:
+            adaptive: true
+            period: 3000ms
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: 1000ms
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.generator.rental.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    com.generator.rental.mapper: DEBUG
+
+alipay:
+  appId: 9021000151643346
+  privateKey: MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCCE6xDJ6wkl1sjiXcwhc4tS+eLyo6/TfiaB/fx6/VkLflvx16r+m9SlSdSN6TSm4vXOU2GpKPiycSvieHQ/XNNT6GwyfORYGuXcPP79alNRp4Z6DDWjaw+QdhxIcBZsh4JW19nonQLNRyHu5FMCs4rBuMvua5D//9Zs1cBRHM4LT5wAy/PC5XhKStBC9IBX1GxXmujxNPSEzaqKsjkQ73oOdOpv+429qqJN+XA7Lqq68EpblMuEMeif+tyWk5jVPKBFSZI5Uz9u0jMk5FO0Z07FPbEmkL5FXUFCJpOzNqJwa853TkG/FY3HWXWOKuQh/wLy+n6DKQUT+laxEJ3Un1FAgMBAAECggEAZ3iGuxS/1oufr/EVor+NdnK+yXBjhMHdU4mrLgHovbvkg4owQNWB4EtNcBVbQz0ATEAE72ngA/NERe6Edt5l7cW+dQbwfWAZtenf6zlLZ3EZKrqMvt8LeKqgJb4XaEJLql3I0oNjk9a3zzDhL4AY6Bked0RY3zawRQZn21Y74R7UGQXwb7ELpHucDJ+Lai9OGIHjJGyt+ypW1/nwtu5Ju++jDwv0jLkBliu/gJ1ko9pS8aBQ7AQPRtISsj51lEpuKH3wuPoqr06dE7QSK8bhIs2YPIsczjYJUphNfbFVatZIeXg+b8PuyvK9vIAiO8rEtDkmCz3Tc930ohjW2BXlAQKBgQDfY7I7YfktsDp/vrMOYEmmRXuU+7/CjKVEsvC2FkTvtWJTUXcADjIV4+0SL5bMTCuiVKpBUawlYZZ288m5lPgSvhqP2IMXxBf5PDE2zNjgsMlkW2tx/MewY+8jGmwKQ0BSFLEj1Gh/ImzAa9NI5SAGenk2n1tFazHftkN/REKiEQKBgQCVEMjiZ+sWCfciG+7aF3nYPxTtr4EjEWop+YBj2FoPnd3j3CZDbHzGstvRmghqdwibYlUn7/jH1caA8ja80ut3WQHjgGrVJY6WDKL81WhXIzzONiy1PnIR0i2PN68SzbSsXUmB9S7nmwltOOhUBEN7FRNSrBd/TEzDvCAoBQQz9QKBgFUCr5UBl73XTqvGeoWCBwULdBgiJbt3on0eS5Q/rUQ7lot2eP7AaDcEYfeFvLFKW2CPL6tj1Ur0dDoYVDAXjMA1MA6Fqn2k1iq2yVO9aNs466sRTzY1qBhsL1kAeRT+ur+BuFeWQZ4AD7q6TdFzwFg2y2IKCsXEIVqtFcqcw27BAoGAaUkWqhs+By34uMXD+ZSVQfCkRpEsg+lb89O/JEZ+rgMR40vuVrb8lpdj/XJvOUtj7+QPQ4sSS4spjpAFq27KU1yxoc9lJbFGOaMpR60v6kQAQaIwB7/Yb8/k0ABDjuNuFkQ5lCnp/Dob+WI1boooY3nqUP0uB4KLwcBRchLA+jUCgYAYQpWvbJib1x6WRBB/SPMPLyHoN8E39G5TUKdjA8S8aPKmKyitefc8kTWvLyU44YL62DSgXDFo8gdonVNqLfRU2ZlN4yYZSRbdBPcP6a6ctI7fpqlGY7wUjpvPZ3Yqd+VD7a0HJQMyJY+oqDhNHNy6/qNAFSzayDUl8KLiFq8O7A==
+  alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqDdbzxYr9STvEbnvvFITpSWXHnm7e4LHa+6o3k71cBsJV/hV2Y3+f3CLzZoT9uTkXDZvt7THOXGj7FivkVLicXjsvrqeqC2TfbnAmD01Ankji/BCp4O8z+a6d07uze6jU83hIvjKJwjRJJsedNfLuY1AR729/Om27glri8imKXSlroWCVv58TTJqz+5oMhpqHs1pcoX3b4TK8+iqEQZh6LoadZ0CxPgVQlXy1UCSpyu/ExyT/Kvx9fZ2ITURUaaOfHnyXr/FkhL9Ms9cGVOg1Q/l8E80nZyLm3mzXRLZzi3ssdl/+gpD07MiCoJ163MTnJd/EldPEXPcoGHAndxzSQIDAQAB
+  gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+  notifyUrl: http://localhost:8081/api/payment/notify
+  returnUrl: http://localhost:5173/payment/success
+

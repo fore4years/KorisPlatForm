@@ -1,0 +1,125 @@
+.register-container.data-v-97bb96ad {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  padding: 40rpx 0;
+}
+.register-content.data-v-97bb96ad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30rpx;
+  width: 90%;
+}
+.brand-section.data-v-97bb96ad {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.title.data-v-97bb96ad {
+  font-size: 40rpx;
+  color: #2c3e50;
+  margin-bottom: 10rpx;
+  font-weight: 700;
+}
+.subtitle.data-v-97bb96ad {
+  font-size: 24rpx;
+  color: #606266;
+}
+.register-card.data-v-97bb96ad {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  padding: 40rpx;
+  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.08);
+}
+.card-header.data-v-97bb96ad {
+  text-align: center;
+  margin-bottom: 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.card-title.data-v-97bb96ad {
+  font-size: 32rpx;
+  color: #303133;
+  margin-bottom: 10rpx;
+  font-weight: bold;
+}
+.card-subtitle.data-v-97bb96ad {
+  color: #909399;
+  font-size: 24rpx;
+}
+.form-item.data-v-97bb96ad {
+  margin-bottom: 30rpx;
+}
+.label.data-v-97bb96ad {
+  font-size: 28rpx;
+  color: #606266;
+  margin-bottom: 10rpx;
+  display: block;
+}
+.input.data-v-97bb96ad {
+  height: 80rpx;
+  background-color: #f5f7fa;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  border: 1px solid #dcdfe6;
+}
+.role-group.data-v-97bb96ad {
+  display: flex;
+  gap: 40rpx;
+}
+.radio-label.data-v-97bb96ad {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #606266;
+  gap: 10rpx;
+}
+.strength-bar.data-v-97bb96ad {
+  display: flex;
+  gap: 5rpx;
+  margin-top: 10rpx;
+  height: 6rpx;
+}
+.bar.data-v-97bb96ad {
+  flex: 1;
+  background: #ebeef5;
+  border-radius: 3rpx;
+  transition: all 0.3s;
+}
+.bar.active.data-v-97bb96ad {
+  background: #67c23a;
+}
+.strength-text.data-v-97bb96ad {
+  font-size: 24rpx;
+  color: #909399;
+  text-align: right;
+  margin-top: 4rpx;
+  display: block;
+}
+.submit-btn.data-v-97bb96ad {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 32rpx;
+  border-radius: 8rpx;
+  margin-top: 20rpx;
+}
+.form-footer.data-v-97bb96ad {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 24rpx;
+  color: #606266;
+  margin-top: 20rpx;
+}
+.link.data-v-97bb96ad {
+  color: #409eff;
+}

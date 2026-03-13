@@ -1,0 +1,23 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/register/register",
+    "pages/forgot-password/forgot-password",
+    "pages/tenant/home",
+    "pages/merchant/home",
+    "pages/admin/home",
+    "pages/merchant/generator-edit",
+    "pages/generator/detail",
+    "pages/order/detail",
+    "pages/profile/profile",
+    "pages/cart/cart",
+    "pages/tenant/orders"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "usingComponents": {}
+}

@@ -1,0 +1,136 @@
+.merchant-home.data-v-d43dddfc {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f7fa;
+}
+.header.data-v-d43dddfc {
+  background: #fff;
+  padding: 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.title.data-v-d43dddfc {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+.subtitle.data-v-d43dddfc {
+  font-size: 24rpx;
+  color: #666;
+}
+.tabs.data-v-d43dddfc {
+  display: flex;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+.tab-item.data-v-d43dddfc {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  border-bottom: 2px solid transparent;
+}
+.tab-item.active.data-v-d43dddfc {
+  color: #409EFF;
+  border-bottom-color: #409EFF;
+}
+.content-area.data-v-d43dddfc {
+  flex: 1;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+.action-bar.data-v-d43dddfc {
+  margin-bottom: 20rpx;
+  display: flex;
+  justify-content: flex-end;
+}
+.list-item.data-v-d43dddfc {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  gap: 20rpx;
+}
+.item-img.data-v-d43dddfc {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 8rpx;
+  background: #eee;
+}
+.item-info.data-v-d43dddfc {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.order-info.data-v-d43dddfc {
+  flex: 1;
+}
+.item-row.data-v-d43dddfc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+.item-name.data-v-d43dddfc {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+.item-status.data-v-d43dddfc {
+  font-size: 22rpx;
+  padding: 2rpx 8rpx;
+  border-radius: 4rpx;
+}
+.item-status.AVAILABLE.data-v-d43dddfc {
+  background: #f0f9eb;
+  color: #67c23a;
+}
+.item-status.RENTED.data-v-d43dddfc {
+  background: #fdf6ec;
+  color: #e6a23c;
+}
+.item-status.MAINTENANCE.data-v-d43dddfc {
+  background: #fef0f0;
+  color: #f56c6c;
+}
+.item-detail.data-v-d43dddfc {
+  font-size: 24rpx;
+  color: #666;
+}
+.item-date.data-v-d43dddfc {
+  font-size: 22rpx;
+  color: #999;
+}
+.item-actions.data-v-d43dddfc {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10rpx;
+}
+.action-btn.data-v-d43dddfc {
+  margin: 0;
+  font-size: 22rpx;
+}
+.action-btn.edit.data-v-d43dddfc {
+  background: #ecf5ff;
+  color: #409EFF;
+}
+.action-btn.delete.data-v-d43dddfc {
+  background: #fef0f0;
+  color: #f56c6c;
+}
+.empty.data-v-d43dddfc {
+  text-align: center;
+  padding: 50rpx;
+  color: #999;
+}
+.order-id.data-v-d43dddfc {
+  font-size: 26rpx;
+  color: #333;
+}
+.order-status.data-v-d43dddfc {
+  font-size: 26rpx;
+  color: #409EFF;
+}
