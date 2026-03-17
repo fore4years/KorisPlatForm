@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
-@PreAuthorize("authenticated()")
+@PreAuthorize("isAuthenticated()")
 public class UserController {
 
     @Autowired

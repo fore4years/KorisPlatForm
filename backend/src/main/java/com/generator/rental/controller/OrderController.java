@@ -54,7 +54,7 @@ public class OrderController {
      * @return 订单响应
      */
     @GetMapping("/{id}")
-    @PreAuthorize("authenticated()")
+    @PreAuthorize("isAuthenticated()")
     public Result<OrderResponse> getDetail(@PathVariable Long id) {
         return Result.success(orderService.getOrderDetail(id));
     }
@@ -116,6 +116,7 @@ public class OrderController {
      * @return 订单列表
      */
     @GetMapping("/merchant/{merchantUserId}")
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     public Result<List<OrderResponse>> getMerchantOrders(@PathVariable String merchantUserId) {
         return Result.success(orderService.getMerchantOrders(merchantUserId));
     }
@@ -124,6 +125,7 @@ public class OrderController {
      * 获取商家的客户列表
      */
     @GetMapping("/merchant/{merchantUserId}/customers")
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     public Result<List<com.generator.rental.dto.MerchantCustomerDTO>> getMerchantCustomers(@PathVariable String merchantUserId) {
         return Result.success(orderService.getMerchantCustomers(merchantUserId));
     }
@@ -132,6 +134,7 @@ public class OrderController {
      * 获取商家特定客户的订单历史
      */
     @GetMapping("/merchant/{merchantUserId}/customers/{tenantId}/history")
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     public Result<List<OrderResponse>> getCustomerOrderHistory(
             @PathVariable String merchantUserId,
             @PathVariable Long tenantId) {
@@ -145,7 +148,7 @@ public class OrderController {
      * @return 订单列表
      */
     @GetMapping("/tenant/{tenantUserId}")
-    @PreAuthorize("authenticated()")
+    @PreAuthorize("isAuthenticated()")
     public Result<List<OrderResponse>> getTenantOrders(@PathVariable String tenantUserId) {
         return Result.success(orderService.getTenantOrders(tenantUserId));
     }
