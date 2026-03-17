@@ -137,7 +137,6 @@ public class OrderController {
             @PathVariable Long tenantId) {
         return Result.success(orderService.getCustomerOrderHistory(merchantUserId, tenantId));
     }
-}
 
     /**
      * 获取租户订单列表
@@ -146,6 +145,7 @@ public class OrderController {
      * @return 订单列表
      */
     @GetMapping("/tenant/{tenantUserId}")
+    @PreAuthorize("authenticated()")
     public Result<List<OrderResponse>> getTenantOrders(@PathVariable String tenantUserId) {
         return Result.success(orderService.getTenantOrders(tenantUserId));
     }
@@ -157,6 +157,7 @@ public class OrderController {
      * @return 订单响应
      */
     @PostMapping("/{id}/complete")
+    @PreAuthorize("hasRole('TENANT')")
     public Result<OrderResponse> completeOrder(@PathVariable Long id) {
         return Result.success(orderService.completeOrder(id));
     }
@@ -169,6 +170,7 @@ public class OrderController {
      * @return 订单响应
      */
     @PostMapping("/{id}/return")
+    @PreAuthorize("hasRole('MERCHANT')")
     public Result<OrderResponse> confirmReturn(@PathVariable Long id, @RequestBody Map<String, Object> payload) {
         java.math.BigDecimal deduction = payload.get("deduction") != null ? new java.math.BigDecimal(payload.get("deduction").toString()) : java.math.BigDecimal.ZERO;
         String comment = (String) payload.get("comment");
