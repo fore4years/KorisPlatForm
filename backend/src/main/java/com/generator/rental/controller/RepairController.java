@@ -4,6 +4,7 @@ import com.generator.rental.common.Result;
 import com.generator.rental.entity.RepairRequest;
 import com.generator.rental.service.RepairService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class RepairController {
      * @return 创建的维修请求实体
      */
     @PostMapping("/create")
+    @PreAuthorize("hasRole('TENANT')")
     public Result<RepairRequest> create(@RequestBody Map<String, Object> payload) {
         Long orderId = Long.valueOf(payload.get("orderId").toString());
         String description = (String) payload.get("description");
@@ -38,6 +40,7 @@ public class RepairController {
      * @return 更新后的维修请求实体
      */
     @PostMapping("/{id}/update")
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     public Result<RepairRequest> update(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         return Result.success(repairService.updateStatus(id, payload.get("status"), payload.get("response")));
     }
@@ -49,6 +52,7 @@ public class RepairController {
      * @return 维修请求列表
      */
     @GetMapping("/order/{orderId}")
+    @PreAuthorize("isAuthenticated()")
     public Result<List<RepairRequest>> getByOrder(@PathVariable Long orderId) {
         return Result.success(repairService.getByOrder(orderId));
     }

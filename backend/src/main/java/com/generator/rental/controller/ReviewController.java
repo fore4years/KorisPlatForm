@@ -4,6 +4,7 @@ import com.generator.rental.common.Result;
 import com.generator.rental.entity.Review;
 import com.generator.rental.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ReviewController {
      * @return 创建的评价实体
      */
     @PostMapping("/create")
+    @PreAuthorize("hasRole('TENANT')")
     public Result<Review> create(@RequestBody Map<String, Object> payload) {
         Long orderId = Long.valueOf(payload.get("orderId").toString());
         Integer rating = Integer.valueOf(payload.get("rating").toString());

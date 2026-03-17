@@ -4,6 +4,7 @@ import com.generator.rental.common.Result;
 import com.generator.rental.entity.Complaint;
 import com.generator.rental.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ComplaintController {
      * @return 创建的投诉实体
      */
     @PostMapping("/create")
+    @PreAuthorize("isAuthenticated()")
     public Result<Complaint> createComplaint(@RequestBody Map<String, Object> payload) {
         Long orderId = Long.valueOf(payload.get("orderId").toString());
         String complainantUserId = (String) payload.get("complainantId");
@@ -38,6 +40,7 @@ public class ComplaintController {
      * @return 投诉列表
      */
     @GetMapping("/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<List<Complaint>> getAllComplaints() {
         return Result.success(complaintService.getAllComplaints());
     }
@@ -50,6 +53,7 @@ public class ComplaintController {
      * @return 空响应
      */
     @PostMapping("/{id}/resolve")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<Void> resolveComplaint(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         complaintService.resolveComplaint(id, payload.get("resolution"));
         return Result.success();

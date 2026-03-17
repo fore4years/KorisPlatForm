@@ -4,6 +4,7 @@ import com.generator.rental.common.Result;
 import com.generator.rental.service.AlipayService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class PaymentController {
      * @return 包含支付表单HTML的 Map
      */
     @PostMapping("/pay/{orderId}")
+    @PreAuthorize("isAuthenticated()")
     public Result<Map<String, String>> pay(@PathVariable Long orderId) {
         // Alipay returns an HTML form, we send it back to frontend
         String formHtml = alipayService.createPayOrder(orderId);
@@ -40,6 +42,7 @@ public class PaymentController {
      * @return 成功提示
      */
     @PostMapping("/success/{orderId}")
+    @PreAuthorize("isAuthenticated()")
     public Result<String> paymentSuccess(@PathVariable Long orderId, @RequestBody Map<String, String> payload) {
         String tradeNo = payload.get("tradeNo");
         alipayService.handlePaymentSuccess(orderId, tradeNo);

@@ -4,12 +4,14 @@ import com.generator.rental.common.Result;
 import com.generator.rental.entity.Contract;
 import com.generator.rental.service.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contracts")
+@PreAuthorize("isAuthenticated()")
 public class ContractController {
 
     @Autowired
@@ -33,6 +35,7 @@ public class ContractController {
      * @return 更新后的合同实体
      */
     @PostMapping("/sign")
+    @PreAuthorize("hasAnyRole('TENANT', 'MERCHANT')")
     public Result<Contract> signContract(@RequestBody Map<String, Object> payload) {
         Long orderId = Long.valueOf(payload.get("orderId").toString());
         String userId = (String) payload.get("userId");

@@ -2,6 +2,7 @@ package com.generator.rental.controller;
 
 import com.generator.rental.common.Result;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/files")
+@PreAuthorize("isAuthenticated()")
 public class FileController {
 
     @Value("${file.upload-dir:uploads}")
