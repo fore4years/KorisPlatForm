@@ -283,7 +283,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 com.generator.rental.dto.MerchantCustomerDTO newDto = new com.generator.rental.dto.MerchantCustomerDTO();
                 newDto.setId(tenant.getId());
                 newDto.setUsername(tenant.getUsername());
-                newDto.setName(tenant.getRealName() != null ? tenant.getRealName() : tenant.getUsername());
+                newDto.setName(tenant.getName() != null ? tenant.getName() : tenant.getUsername());
                 newDto.setPhone(tenant.getPhone());
                 newDto.setAvatar(tenant.getAvatar());
                 newDto.setTotalOrders(0);
