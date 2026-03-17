@@ -94,13 +94,83 @@
 
             <!-- Customer Management Tab -->
             <el-tab-pane label="客户管理" name="customers">
-              <div class="customer-tab-content">
-                <el-button type="primary" plain @click="$router.push('/merchant/customers')">进入全屏客户管理</el-button>
+              <div class="tab-actions">
+                <el-input
+                  v-model="searchCustomer"
+                  placeholder="搜索客户姓名/手机号"
+                  style="width: 250px"
+                  clearable
+                  :prefix-icon="Search"
+                />
               </div>
+              <el-table :data="filterCustomers" v-loading="loadingCustomers" style="width: 100%" class="data-table">
+                <el-table-column label="姓名" min-width="120">
+                  <template #default="scope">
+                    <div class="customer-info">
+                      <el-avatar :size="32" :src="scope.row.avatar" />
+                      <span>{{ scope.row.name || scope.row.username }}</span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="phone" label="联系电话" width="130" align="center" />
+                <el-table-column prop="totalOrders" label="累计订单" width="100" align="center" sortable />
+                <el-table-column prop="totalAmount" label="累计金额" width="130" align="right" sortable>
+                  <template #default="scope">
+                    <span class="price">¥{{ scope.row.totalAmount.toFixed(2) }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="最后下单" width="180" align="center">
+                  <template #default="scope">{{ formatDate(scope.row.lastOrderTime) }}</template>
+                </el-table-column>
+                <el-table-column label="信用状态" width="100" align="center">
+                  <template #default="scope">
+                    <el-tag :type="scope.row.creditStatus === '良好' ? 'success' : 'warning'" size="small">
+                      {{ scope.row.creditStatus }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" width="120" align="center" fixed="right">
+                  <template #default="scope">
+                    <el-button size="small" link type="primary" @click="showHistory(scope.row)">租赁历史</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
             </el-tab-pane>
           </el-tabs>
         </el-card>
       </el-main>
+
+      <!-- History Dialog -->
+      <el-dialog
+        v-model="historyVisible"
+        :title="'与 ' + currentCustomer?.name + ' 的租赁历史'"
+        width="800px"
+        center
+      >
+        <el-table :data="orderHistory" v-loading="historyLoading" border stripe>
+          <el-table-column prop="generatorName" label="设备名称" min-width="180" />
+          <el-table-column label="订单金额" width="130" align="right">
+            <template #default="scope">
+              <span class="price">¥{{ scope.row.totalAmount }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" width="120" align="center">
+            <template #default="scope">
+              <el-tag :type="getStatusType(scope.row.status)" size="small">
+                {{ formatStatus(scope.row.status) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="下单时间" width="180" align="center">
+            <template #default="scope">{{ formatDate(scope.row.createdAt) }}</template>
+          </el-table-column>
+          <el-table-column label="操作" width="100" align="center">
+            <template #default="scope">
+              <el-button size="small" link type="primary" @click="viewOrder(scope.row.id)">详情</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
 
       <!-- Device Modal -->
       <el-dialog v-model="showDeviceModal" :title="isEdit ? '编辑设备' : '发布新设备'" width="600px" center>
@@ -221,19 +291,35 @@
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { getMyGenerators, createGenerator, updateGenerator, deleteGenerator } from '../api/generator'
-import { getMerchantOrders } from '../api/order'
+import { getMerchantOrders, getMerchantCustomers, getCustomerOrderHistory } from '../api/order'
 import { ElMessage } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Search } from '@element-plus/icons-vue'
 import UploadImage from '../components/UploadImage.vue'
 import ThemeToggle from '../components/ThemeToggle.vue'
+import { computed } from 'vue'
 
 const router = useRouter()
 const user = ref({})
 const activeTab = ref('devices')
 const devices = ref([])
 const orders = ref([])
+const customers = ref([])
+const searchCustomer = ref('')
 const loadingDevices = ref(false)
 const loadingOrders = ref(false)
+const loadingCustomers = ref(false)
+const historyVisible = ref(false)
+const historyLoading = ref(false)
+const orderHistory = ref([])
+const currentCustomer = ref(null)
+
+const filterCustomers = computed(() => {
+  return customers.value.filter(c => 
+    (c.name && c.name.toLowerCase().includes(searchCustomer.value.toLowerCase())) ||
+    (c.phone && c.phone.includes(searchCustomer.value)) ||
+    (c.username && c.username.toLowerCase().includes(searchCustomer.value.toLowerCase()))
+  )
+})
 
 const loadUser = () => {
   const storedUser = localStorage.getItem('user')
@@ -301,11 +387,39 @@ const loadOrders = async () => {
   }
 }
 
+const loadCustomers = async () => {
+  loadingCustomers.value = true
+  try {
+    const res = await getMerchantCustomers()
+    customers.value = res || []
+  } catch (error) {
+    ElMessage.error('获取客户列表失败')
+  } finally {
+    loadingCustomers.value = false
+  }
+}
+
+const showHistory = async (customer) => {
+  currentCustomer.value = customer
+  historyVisible.value = true
+  historyLoading.value = true
+  try {
+    const res = await getCustomerOrderHistory(customer.id)
+    orderHistory.value = res || []
+  } catch (error) {
+    ElMessage.error('获取租赁历史失败')
+  } finally {
+    historyLoading.value = false
+  }
+}
+
 const handleTabClick = (tab) => {
   if (tab.paneName === 'devices') {
     loadDevices()
   } else if (tab.paneName === 'orders') {
     loadOrders()
+  } else if (tab.paneName === 'customers') {
+    loadCustomers()
   }
 }
 
@@ -495,5 +609,24 @@ onMounted(() => {
 }
 .device-form {
   padding: 0 20px;
+}
+.customer-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.customer-info span {
+  font-weight: 500;
+  color: #303133;
+}
+.data-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+:deep(.el-table__header-wrapper th) {
+  background-color: #f8f9fb !important;
+  color: #606266;
+  font-weight: 600;
 }
 </style>

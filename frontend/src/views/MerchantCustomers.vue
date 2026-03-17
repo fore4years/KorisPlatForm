@@ -14,39 +14,38 @@
       </template>
 
       <el-table :data="filterCustomers" style="width: 100%" v-loading="loading">
-        <el-table-column label="客户信息" min-width="200">
+        <el-table-column label="客户姓名" min-width="120">
           <template #default="scope">
             <div class="customer-info">
-              <el-avatar :size="40" :src="scope.row.avatar" />
+              <el-avatar :size="32" :src="scope.row.avatar" />
               <div class="details">
-                <div class="name">{{ scope.row.name }}</div>
-                <div class="username">@{{ scope.row.username }}</div>
+                <div class="name">{{ scope.row.name || scope.row.username }}</div>
               </div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="phone" label="联系电话" width="150" />
-        <el-table-column prop="totalOrders" label="累计订单" width="100" sortable />
-        <el-table-column prop="totalAmount" label="累计金额" width="120" sortable>
+        <el-table-column prop="phone" label="联系电话" width="130" align="center" />
+        <el-table-column prop="totalOrders" label="累计订单" width="100" align="center" sortable />
+        <el-table-column prop="totalAmount" label="累计金额" width="130" align="right" sortable>
           <template #default="scope">
             ¥{{ scope.row.totalAmount.toFixed(2) }}
           </template>
         </el-table-column>
-        <el-table-column prop="lastOrderTime" label="最后下单" width="180">
+        <el-table-column prop="lastOrderTime" label="最后下单" width="180" align="center">
           <template #default="scope">
             {{ formatDate(scope.row.lastOrderTime) }}
           </template>
         </el-table-column>
-        <el-table-column prop="creditStatus" label="信用状态" width="100">
+        <el-table-column prop="creditStatus" label="信用状态" width="100" align="center">
           <template #default="scope">
-            <el-tag :type="scope.row.creditStatus === '良好' ? 'success' : 'warning'">
+            <el-tag :type="scope.row.creditStatus === '良好' ? 'success' : 'warning'" size="small">
               {{ scope.row.creditStatus }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150" fixed="right">
+        <el-table-column label="操作" width="120" align="center" fixed="right">
           <template #default="scope">
-            <el-button size="small" type="primary" @click="showHistory(scope.row)">
+            <el-button size="small" type="primary" link @click="showHistory(scope.row)">
               租赁历史
             </el-button>
           </template>
