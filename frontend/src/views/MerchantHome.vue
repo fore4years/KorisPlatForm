@@ -104,13 +104,13 @@
                 />
               </div>
               <el-table :data="filterCustomers" v-loading="loadingCustomers" style="width: 100%" class="data-table">
-                <el-table-column label="姓名" min-width="120">
+                <el-table-column label="客户账号" min-width="120">
                   <template #default="scope">
-                    <div class="customer-info">
-                      <el-avatar :size="32" :src="scope.row.avatar" />
-                      <span>{{ scope.row.name || scope.row.username }}</span>
-                    </div>
+                    <span>{{ scope.row.username }}</span>
                   </template>
+                </el-table-column>
+                <el-table-column prop="name" label="真实姓名" width="120" align="center">
+                  <template #default="scope">{{ scope.row.name || '-' }}</template>
                 </el-table-column>
                 <el-table-column prop="phone" label="联系电话" width="130" align="center" />
                 <el-table-column prop="totalOrders" label="累计订单" width="100" align="center" sortable />

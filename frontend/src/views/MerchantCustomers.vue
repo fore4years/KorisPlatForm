@@ -14,15 +14,13 @@
       </template>
 
       <el-table :data="filterCustomers" style="width: 100%" v-loading="loading">
-        <el-table-column label="客户姓名" min-width="120">
+        <el-table-column label="客户账号" min-width="120">
           <template #default="scope">
-            <div class="customer-info">
-              <el-avatar :size="32" :src="scope.row.avatar" />
-              <div class="details">
-                <div class="name">{{ scope.row.name || scope.row.username }}</div>
-              </div>
-            </div>
+            <span>{{ scope.row.username }}</span>
           </template>
+        </el-table-column>
+        <el-table-column prop="name" label="真实姓名" width="120" align="center">
+          <template #default="scope">{{ scope.row.name || '-' }}</template>
         </el-table-column>
         <el-table-column prop="phone" label="联系电话" width="130" align="center" />
         <el-table-column prop="totalOrders" label="累计订单" width="100" align="center" sortable />
