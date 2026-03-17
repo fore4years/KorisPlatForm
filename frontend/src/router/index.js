@@ -90,6 +90,11 @@ const routes = [
     component: () => import('../views/MerchantHome.vue')
   },
   {
+    path: '/merchant/customers',
+    name: 'MerchantCustomers',
+    component: () => import('../views/MerchantCustomers.vue')
+  },
+  {
     path: '/merchant/apply',
     name: 'MerchantApply',
     component: () => import('../views/MerchantApply.vue')

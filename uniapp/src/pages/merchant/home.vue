@@ -12,6 +12,9 @@
         <view :class="['tab-item', activeTab === 'orders' ? 'active' : '']" @click="activeTab = 'orders'">
             订单管理
         </view>
+        <view :class="['tab-item', activeTab === 'customers' ? 'active' : '']" @click="activeTab = 'customers'">
+            客户管理
+        </view>
     </view>
 
     <scroll-view scroll-y class="content-area">
@@ -59,20 +62,44 @@
             </view>
             <view v-if="orders.length === 0" class="empty">暂无订单</view>
         </view>
+
+        <!-- Customers Tab -->
+        <view v-if="activeTab === 'customers'">
+            <view class="list-item customer-item" v-for="customer in customers" :key="customer.id" @click="goToCustomerHistory(customer)">
+                <image :src="getImageUrl(customer.avatar)" class="avatar" mode="aspectFill" />
+                <view class="customer-info">
+                    <view class="item-row">
+                        <text class="customer-name">{{ customer.name }}</text>
+                        <text class="credit-tag" :class="customer.creditStatus === '良好' ? 'good' : 'bad'">{{ customer.creditStatus }}</text>
+                    </view>
+                    <view class="item-row">
+                        <text class="item-detail">累计订单: {{ customer.totalOrders }} | 累计金额: ¥{{ customer.totalAmount }}</text>
+                    </view>
+                </view>
+            </view>
+            <view v-if="customers.length === 0" class="empty">暂无客户</view>
+        </view>
     </scroll-view>
   </view>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { getMyGenerators, deleteGenerator } from '@/api/generator'
-import { getMerchantOrders } from '@/api/order'
+import { getMerchantOrders, getMerchantCustomers } from '@/api/order'
 import { getImageUrl } from '@/utils/image'
 
 const user = ref({})
 const activeTab = ref('devices')
 const devices = ref([])
 const orders = ref([])
+const customers = ref([])
+
+watch(activeTab, (newTab) => {
+    if (newTab === 'devices') loadDevices()
+    else if (newTab === 'orders') loadOrders()
+    else if (newTab === 'customers') loadCustomers()
+})
 
 const loadUser = () => {
     const u = uni.getStorageSync('user')
@@ -101,9 +128,26 @@ const loadOrders = async () => {
     }
 }
 
+const loadCustomers = async () => {
+    if (!user.value.userid) return
+    try {
+        const res = await getMerchantCustomers(user.value.userid)
+        customers.value = res || []
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 const goToEdit = (id) => {
-    const url = id ? `/pages/merchant/generator-edit?id=${id}` : '/pages/merchant/generator-edit'
-    uni.navigateTo({ url })
+    uni.navigateTo({
+        url: `/pages/merchant/generator-edit?id=${id || ''}`
+    })
+}
+
+const goToCustomerHistory = (customer) => {
+    uni.navigateTo({
+        url: `/pages/merchant/customer-history?id=${customer.id}&name=${customer.name}`
+    })
 }
 
 const handleDelete = (id) => {

@@ -16,4 +16,8 @@ public interface OrderService {
     OrderResponse completeOrder(Long orderId);
     OrderResponse confirmReturn(Long orderId, java.math.BigDecimal deductionAmount, String comment);
     OrderResponse confirmReceipt(Long orderId);
+
+    // 商家客户管理
+    java.util.List<com.generator.rental.dto.MerchantCustomerDTO> getMerchantCustomers(String merchantUserId);
+    java.util.List<OrderResponse> getCustomerOrderHistory(String merchantUserId, Long tenantId);
 }

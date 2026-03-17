@@ -24,7 +24,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -260,6 +263,56 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setStatus(Order.Status.RENTING);
         updateById(order);
         return convertToResponse(order);
+    }
+
+    @Override
+    public List<com.generator.rental.dto.MerchantCustomerDTO> getMerchantCustomers(String merchantUserId) {
+        User merchant = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUserId, merchantUserId));
+        if (merchant == null) return List.of();
+
+        // 获取该商家的所有订单
+        List<Order> orders = list(new LambdaQueryWrapper<Order>().eq(Order::getMerchantId, merchant.getId()));
+        
+        // 按租户 ID 分组聚合
+        Map<Long, com.generator.rental.dto.MerchantCustomerDTO> customerMap = new HashMap<>();
+        
+        for (Order order : orders) {
+            Long tenantId = order.getTenantId();
+            com.generator.rental.dto.MerchantCustomerDTO dto = customerMap.computeIfAbsent(tenantId, id -> {
+                User tenant = userMapper.selectById(id);
+                com.generator.rental.dto.MerchantCustomerDTO newDto = new com.generator.rental.dto.MerchantCustomerDTO();
+                newDto.setId(tenant.getId());
+                newDto.setUsername(tenant.getUsername());
+                newDto.setName(tenant.getRealName() != null ? tenant.getRealName() : tenant.getUsername());
+                newDto.setPhone(tenant.getPhone());
+                newDto.setAvatar(tenant.getAvatar());
+                newDto.setTotalOrders(0);
+                newDto.setTotalAmount(BigDecimal.ZERO);
+                newDto.setCreditStatus("良好"); // 默认信用良好
+                return newDto;
+            });
+            
+            dto.setTotalOrders(dto.getTotalOrders() + 1);
+            dto.setTotalAmount(dto.getTotalAmount().add(order.getTotalAmount()));
+            if (dto.getLastOrderTime() == null || order.getCreateTime().isAfter(dto.getLastOrderTime())) {
+                dto.setLastOrderTime(order.getCreateTime());
+            }
+        }
+        
+        return new ArrayList<>(customerMap.values());
+    }
+
+    @Override
+    public List<OrderResponse> getCustomerOrderHistory(String merchantUserId, Long tenantId) {
+        User merchant = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUserId, merchantUserId));
+        if (merchant == null) return List.of();
+
+        List<Order> orders = list(new LambdaQueryWrapper<Order>()
+                .eq(Order::getMerchantId, merchant.getId())
+                .eq(Order::getTenantId, tenantId)
+                .orderByDesc(Order::getCreateTime));
+                
+        return orders.stream().map(this::convertToResponse).collect(Collectors.toList());
     }
 
     private OrderResponse convertToResponse(Order order) {

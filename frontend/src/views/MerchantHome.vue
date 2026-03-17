@@ -91,6 +91,13 @@
                 </el-table-column>
               </el-table>
             </el-tab-pane>
+
+            <!-- Customer Management Tab -->
+            <el-tab-pane label="客户管理" name="customers">
+              <div class="customer-tab-content">
+                <el-button type="primary" plain @click="$router.push('/merchant/customers')">进入全屏客户管理</el-button>
+              </div>
+            </el-tab-pane>
           </el-tabs>
         </el-card>
       </el-main>

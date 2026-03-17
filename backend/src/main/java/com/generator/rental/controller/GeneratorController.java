@@ -7,6 +7,7 @@ import com.generator.rental.dto.GeneratorSearchRequest;
 import com.generator.rental.entity.Generator;
 import com.generator.rental.service.GeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class GeneratorController {
      * @return 发电机列表
      */
     @GetMapping("/merchant/{merchantUserId}")
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     public Result<List<GeneratorDTO>> getMyGenerators(@PathVariable String merchantUserId) {
         return Result.success(generatorService.getMyGenerators(merchantUserId));
     }
@@ -59,6 +61,7 @@ public class GeneratorController {
      * @return 空响应
      */
     @PostMapping
+    @PreAuthorize("hasRole('MERCHANT')")
     public Result<Void> createGenerator(@RequestBody Generator generator, @RequestHeader("X-User-ID") String merchantUserId) {
         generatorService.createGenerator(generator, merchantUserId);
         return Result.success();
@@ -72,6 +75,7 @@ public class GeneratorController {
      * @return 空响应
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     public Result<Void> updateGenerator(@PathVariable Long id, @RequestBody Generator generator) {
         generatorService.updateGenerator(id, generator);
         return Result.success();
@@ -84,6 +88,7 @@ public class GeneratorController {
      * @return 空响应
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('MERCHANT', 'ADMIN')")
     public Result<Void> deleteGenerator(@PathVariable Long id) {
         generatorService.deleteGenerator(id);
         return Result.success();

@@ -43,6 +43,12 @@
       }
     },
     {
+      "path": "pages/merchant/customer-history",
+      "style": {
+        "navigationBarTitleText": "租赁历史"
+      }
+    },
+    {
       "path": "pages/generator/detail",
       "style": {
         "navigationBarTitleText": "设备详情"

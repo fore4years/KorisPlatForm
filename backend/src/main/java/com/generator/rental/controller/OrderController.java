@@ -6,6 +6,7 @@ import com.generator.rental.dto.OrderResponse;
 import com.generator.rental.dto.PriceCalculationResponse;
 import com.generator.rental.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class OrderController {
      * @return 价格计算结果
      */
     @PostMapping("/calculate-price")
+    @PreAuthorize("hasAnyRole('TENANT', 'ADMIN')")
     public Result<PriceCalculationResponse> calculatePrice(@RequestBody Map<String, Object> payload) {
         Long generatorId = Long.valueOf(payload.get("generatorId").toString());
         String startTime = (String) payload.get("startTime");
@@ -40,6 +42,7 @@ public class OrderController {
      * @return 订单响应
      */
     @PostMapping
+    @PreAuthorize("hasRole('TENANT')")
     public Result<OrderResponse> createOrder(@RequestBody OrderRequest request, @RequestHeader("X-User-ID") String tenantId) {
         return Result.success(orderService.createOrder(request, tenantId));
     }
@@ -51,6 +54,7 @@ public class OrderController {
      * @return 订单响应
      */
     @GetMapping("/{id}")
+    @PreAuthorize("authenticated()")
     public Result<OrderResponse> getDetail(@PathVariable Long id) {
         return Result.success(orderService.getOrderDetail(id));
     }
@@ -62,6 +66,7 @@ public class OrderController {
      * @return 订单响应
      */
     @PostMapping("/{id}/confirm")
+    @PreAuthorize("hasRole('MERCHANT')")
     public Result<OrderResponse> confirmOrder(@PathVariable Long id) {
         return Result.success(orderService.confirmOrder(id));
     }
@@ -74,6 +79,7 @@ public class OrderController {
      * @return 订单响应
      */
     @PostMapping("/{id}/delivery")
+    @PreAuthorize("hasRole('MERCHANT')")
     public Result<OrderResponse> updateDelivery(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         return Result.success(orderService.updateDelivery(id, payload.get("deliveryType")));
     }
@@ -86,6 +92,7 @@ public class OrderController {
      * @return 订单响应
      */
     @PostMapping("/{id}/evidence")
+    @PreAuthorize("hasAnyRole('MERCHANT', 'TENANT')")
     public Result<OrderResponse> uploadEvidence(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         return Result.success(orderService.uploadDeliveryEvidence(id, payload.get("evidenceUrl")));
     }
@@ -97,6 +104,7 @@ public class OrderController {
      * @return 订单响应
      */
     @PostMapping("/{id}/receipt")
+    @PreAuthorize("hasRole('TENANT')")
     public Result<OrderResponse> confirmReceipt(@PathVariable Long id) {
         return Result.success(orderService.confirmReceipt(id));
     }
@@ -111,6 +119,25 @@ public class OrderController {
     public Result<List<OrderResponse>> getMerchantOrders(@PathVariable String merchantUserId) {
         return Result.success(orderService.getMerchantOrders(merchantUserId));
     }
+
+    /**
+     * 获取商家的客户列表
+     */
+    @GetMapping("/merchant/{merchantUserId}/customers")
+    public Result<List<com.generator.rental.dto.MerchantCustomerDTO>> getMerchantCustomers(@PathVariable String merchantUserId) {
+        return Result.success(orderService.getMerchantCustomers(merchantUserId));
+    }
+
+    /**
+     * 获取商家特定客户的订单历史
+     */
+    @GetMapping("/merchant/{merchantUserId}/customers/{tenantId}/history")
+    public Result<List<OrderResponse>> getCustomerOrderHistory(
+            @PathVariable String merchantUserId,
+            @PathVariable Long tenantId) {
+        return Result.success(orderService.getCustomerOrderHistory(merchantUserId, tenantId));
+    }
+}
 
     /**
      * 获取租户订单列表

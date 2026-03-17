@@ -7,10 +7,12 @@ import com.generator.rental.dto.UserResponse;
 import com.generator.rental.dto.UserUpdateRequest;
 import com.generator.rental.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
+@PreAuthorize("authenticated()")
 public class UserController {
 
     @Autowired

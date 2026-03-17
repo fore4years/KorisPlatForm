@@ -5,6 +5,7 @@ import com.generator.rental.entity.User;
 import com.generator.rental.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,6 +13,9 @@ public class AdminUserInitializer implements CommandLineRunner {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
@@ -24,8 +28,7 @@ public class AdminUserInitializer implements CommandLineRunner {
         if (count == 0) {
             User admin = new User();
             admin.setUsername(username);
-            // In a real app, this should be encoded
-            admin.setPassword(password);
+            admin.setPassword(passwordEncoder.encode(password));
             admin.setPhone(phone);
             admin.setRole(User.Role.ADMIN);
             admin.setName(name);

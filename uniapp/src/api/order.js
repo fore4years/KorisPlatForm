@@ -43,3 +43,11 @@ export const completeOrder = (id) => {
 export const confirmReturn = (id, data) => {
   return request.post(`/orders/${id}/return`, data)
 }
+
+export const getMerchantCustomers = (merchantId) => {
+  return request.get(`/orders/merchant/${merchantId}/customers`)
+}
+
+export const getCustomerOrderHistory = (merchantId, tenantId) => {
+  return request.get(`/orders/merchant/${merchantId}/customers/${tenantId}/history`)
+}
