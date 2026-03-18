@@ -1,6 +1,7 @@
 package com.generator.rental.config;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.generator.rental.entity.Generator;
 import com.generator.rental.entity.Order;
 import com.generator.rental.entity.User;
@@ -77,7 +78,15 @@ public class DataFixRunner implements CommandLineRunner {
                 }
             }
 
-            // 3. Assign all generators to merchant_bj (for testing purpose)
+        // 3. Assign all generators to merchant_bj (for testing purpose)
+            // Fix: Pre-clean invalid audit status to avoid MyBatis mapping error
+            UpdateWrapper<Generator> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.set("audit_status", "PENDING")
+                    .notIn("audit_status", "PENDING", "APPROVED", "REJECTED")
+                    .or()
+                    .isNull("audit_status");
+            generatorMapper.update(null, updateWrapper);
+
             List<Generator> allGenerators = generatorMapper.selectList(null);
             for (Generator gen : allGenerators) {
                 boolean genChanged = false;
@@ -85,12 +94,6 @@ public class DataFixRunner implements CommandLineRunner {
                     gen.setMerchantId(merchant.getId());
                     genChanged = true;
                     System.out.println("Fixed: Generator " + gen.getId() + " assigned to merchant_bj");
-                }
-                // Fix: Reset invalid audit status
-                if (gen.getAuditStatus() == null || !java.util.Arrays.asList(Generator.AuditStatus.values()).contains(gen.getAuditStatus())) {
-                    gen.setAuditStatus(Generator.AuditStatus.PENDING);
-                    genChanged = true;
-                    System.out.println("Fixed: Generator " + gen.getId() + " audit status reset to PENDING");
                 }
                 if (genChanged) {
                     generatorMapper.updateById(gen);
