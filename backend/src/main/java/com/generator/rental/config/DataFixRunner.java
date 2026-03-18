@@ -80,10 +80,20 @@ public class DataFixRunner implements CommandLineRunner {
             // 3. Assign all generators to merchant_bj (for testing purpose)
             List<Generator> allGenerators = generatorMapper.selectList(null);
             for (Generator gen : allGenerators) {
+                boolean genChanged = false;
                 if (gen.getMerchantId() == null || !gen.getMerchantId().equals(merchant.getId())) {
                     gen.setMerchantId(merchant.getId());
-                    generatorMapper.updateById(gen);
+                    genChanged = true;
                     System.out.println("Fixed: Generator " + gen.getId() + " assigned to merchant_bj");
+                }
+                // Fix: Reset invalid audit status
+                if (gen.getAuditStatus() == null || !java.util.Arrays.asList(Generator.AuditStatus.values()).contains(gen.getAuditStatus())) {
+                    gen.setAuditStatus(Generator.AuditStatus.PENDING);
+                    genChanged = true;
+                    System.out.println("Fixed: Generator " + gen.getId() + " audit status reset to PENDING");
+                }
+                if (genChanged) {
+                    generatorMapper.updateById(gen);
                 }
             }
 
