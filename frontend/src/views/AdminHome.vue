@@ -296,7 +296,98 @@
             </div>
           </el-tab-pane>
 
-          <!-- 3. Complaint Management -->
+          <!-- 2. Equipment Audit -->
+          <el-tab-pane name="generatorAudit">
+            <template #label>
+              <span class="tab-label">
+                <el-icon><Box /></el-icon>
+                设备审核
+                <el-badge v-if="pendingGenerators.length > 0" :value="pendingGenerators.length" class="tab-badge" type="warning" />
+              </span>
+            </template>
+            
+            <div class="tab-content">
+              <div class="tab-header">
+                <h3>待审核设备列表</h3>
+                <el-button type="primary" @click="loadGeneratorAudit" :icon="Refresh">刷新</el-button>
+              </div>
+              
+              <el-table :data="pendingGenerators" v-loading="loadingGeneratorAudit" style="width: 100%" stripe border>
+                <el-table-column type="expand">
+                  <template #default="props">
+                    <div class="merchant-detail">
+                      <el-descriptions :column="2" border title="详细参数">
+                        <el-descriptions-item label="设备名称">{{ props.row.name }}</el-descriptions-item>
+                        <el-descriptions-item label="功率">{{ props.row.power }}</el-descriptions-item>
+                        <el-descriptions-item label="油耗">{{ props.row.fuelConsumption }}</el-descriptions-item>
+                        <el-descriptions-item label="重量">{{ props.row.weight }}</el-descriptions-item>
+                        <el-descriptions-item label="尺寸">{{ props.row.size }}</el-descriptions-item>
+                        <el-descriptions-item label="日租金">¥{{ props.row.dailyRent }}</el-descriptions-item>
+                        <el-descriptions-item label="押金">¥{{ props.row.deposit }}</el-descriptions-item>
+                        <el-descriptions-item label="配送方式">{{ props.row.deliveryMethod }}</el-descriptions-item>
+                        <el-descriptions-item label="位置" :span="2">{{ props.row.address }}</el-descriptions-item>
+                        <el-descriptions-item label="描述" :span="2">{{ props.row.description }}</el-descriptions-item>
+                      </el-descriptions>
+                      <div style="margin-top: 20px;">
+                        <h4>实拍图与权属证明</h4>
+                        <div class="proof-images">
+                           <div class="proof-item" v-if="props.row.imageUrl">
+                             <el-image 
+                               v-for="(url, idx) in props.row.imageUrl.split(',')"
+                               :key="idx"
+                               :src="url" 
+                               :preview-src-list="props.row.imageUrl.split(',')"
+                               fit="cover"
+                               class="proof-img" 
+                               preview-teleported
+                             />
+                             <span class="proof-label">设备实拍图</span>
+                           </div>
+                           <div class="proof-item" v-if="props.row.proofOfOwnershipUrl">
+                             <el-image 
+                               :src="props.row.proofOfOwnershipUrl" 
+                               :preview-src-list="[props.row.proofOfOwnershipUrl]"
+                               fit="cover" 
+                               class="proof-img" 
+                               preview-teleported
+                             />
+                             <span class="proof-label">权属证明</span>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="id" label="ID" width="80" />
+                <el-table-column label="预览图" width="100">
+                  <template #default="scope">
+                    <el-image 
+                      v-if="scope.row.imageUrl"
+                      :src="scope.row.imageUrl.split(',')[0]" 
+                      style="width: 50px; height: 50px; border-radius: 4px"
+                      fit="cover"
+                    />
+                  </template>
+                </el-table-column>
+                <el-table-column prop="name" label="设备名称" min-width="150" />
+                <el-table-column prop="power" label="功率" width="100" />
+                <el-table-column label="日租金" width="120">
+                  <template #default="scope">¥{{ scope.row.dailyRent }}</template>
+                </el-table-column>
+                <el-table-column label="申请时间" width="180">
+                  <template #default="scope">{{ formatDate(scope.row.createTime) }}</template>
+                </el-table-column>
+                <el-table-column label="操作" width="200" fixed="right">
+                  <template #default="scope">
+                    <el-button type="success" size="small" @click="handleGeneratorAudit(scope.row, 'APPROVED')">通过</el-button>
+                    <el-button type="danger" size="small" @click="openGeneratorRejectModal(scope.row)">驳回</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-tab-pane>
+
+          <!-- 3. Complaints -->
           <el-tab-pane name="complaints">
             <template #label>
               <span class="tab-label">
@@ -531,6 +622,44 @@
         </template>
       </el-dialog>
 
+      <!-- Generator Reject Modal -->
+      <el-dialog 
+        v-model="showGeneratorRejectModal" 
+        title="驳回发电机审核"
+        width="500px"
+        :close-on-click-modal="false"
+      >
+        <div class="modal-content">
+          <el-alert
+            title="请详细说明驳回理由，商家将看到此信息"
+            type="warning"
+            show-icon
+            :closable="false"
+            style="margin-bottom: 16px"
+          />
+          <el-form :model="rejectGeneratorForm" ref="rejectGeneratorFormRef" label-width="80px">
+            <el-form-item 
+              label="驳回理由" 
+              prop="reason"
+              :rules="[{ required: true, message: '请输入驳回理由', trigger: 'blur' }]"
+            >
+              <el-input 
+                v-model="rejectGeneratorForm.reason" 
+                type="textarea" 
+                :rows="4"
+                placeholder="例如：权属证明模糊、实拍图不符合规范等..."
+                maxlength="500"
+                show-word-limit
+              />
+            </el-form-item>
+          </el-form>
+        </div>
+        <template #footer>
+          <el-button @click="showGeneratorRejectModal = false">取消</el-button>
+          <el-button type="danger" @click="handleGeneratorReject" :loading="rejectGeneratorLoading">确认驳回</el-button>
+        </template>
+      </el-dialog>
+
     </el-container>
   </div>
 </template>
@@ -543,14 +672,15 @@ import {
   getAllUsers, updateUserStatus, 
   getAllConfigs, updateConfig, 
   getAllComplaints, resolveComplaint,
-  getAdminStats, getActivityLogs
+  getAdminStats, getActivityLogs,
+  getPendingGenerators, auditGenerator
 } from '../api/admin'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Setting, Shop, User, Warning, Tools, MoreFilled, UserFilled,
   Refresh, Check, Close, Search, CircleCheck, CircleClose,
   Clock, Edit, Document, DataAnalysis, TrendCharts, PieChart, 
-  Histogram, CaretTop, CaretBottom
+  Histogram, CaretTop, CaretBottom, Box
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
@@ -558,6 +688,7 @@ const activeTab = ref('dashboard')
 
 // Data
 const pendingMerchants = ref([])
+const pendingGenerators = ref([])
 const allUsers = ref([])
 const complaints = ref([])
 const configs = ref([])
@@ -586,14 +717,19 @@ const resolveForm = reactive({
   resolution: '',
   type: 'mediate'
 })
+const rejectGeneratorForm = reactive({
+  reason: ''
+})
 const currentComplaint = ref(null)
 
 // Loading states
 const loadingAudit = ref(false)
+const loadingGeneratorAudit = ref(false)
 const loadingUsers = ref(false)
 const loadingComplaints = ref(false)
 const loadingConfig = ref(false)
 const rejectLoading = ref(false)
+const rejectGeneratorLoading = ref(false)
 const resolveLoading = ref(false)
 
 // Modals
@@ -602,6 +738,10 @@ const currentRejectId = ref(null)
 
 const showResolveModal = ref(false)
 const currentComplaintId = ref(null)
+
+const showGeneratorRejectModal = ref(false)
+const currentRejectGeneratorId = ref(null)
+const rejectGeneratorFormRef = ref(null)
 
 // Computed properties
 const filteredUsers = computed(() => {
@@ -631,6 +771,7 @@ const handleTabClick = (tab) => {
 const loadData = (tabName) => {
   if (tabName === 'dashboard') refreshDashboard()
   else if (tabName === 'audit') loadAudit()
+  else if (tabName === 'generatorAudit') loadGeneratorAudit()
   else if (tabName === 'users') loadUsers()
   else if (tabName === 'complaints') loadComplaints()
   else if (tabName === 'config') loadConfigs()
@@ -702,6 +843,64 @@ const handleReject = async () => {
     ElMessage.error('驳回操作失败')
   } finally {
     rejectLoading.value = false
+  }
+}
+
+const loadGeneratorAudit = async () => {
+  loadingGeneratorAudit.value = true
+  try {
+    const res = await getPendingGenerators()
+    pendingGenerators.value = res
+  } catch (e) { 
+    ElMessage.error('加载待审核设备失败')
+  } finally { 
+    loadingGeneratorAudit.value = false 
+  }
+}
+
+const handleGeneratorAudit = async (row, status, reason = '') => {
+  try {
+    if (status === 'APPROVED') {
+      await ElMessageBox.confirm(
+        `确认通过设备 "${row.name}" 的发布申请？`,
+        '审核确认',
+        {
+          confirmButtonText: '确认通过',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+    }
+    
+    await auditGenerator(row.id, status, reason)
+    ElMessage.success(status === 'APPROVED' ? '设备审核已通过' : '已驳回设备申请')
+    showGeneratorRejectModal.value = false
+    loadGeneratorAudit()
+  } catch (e) { 
+    if (e !== 'cancel') {
+      ElMessage.error('操作失败')
+    }
+  }
+}
+
+const openGeneratorRejectModal = (row) => {
+  currentRejectGeneratorId.value = row.id
+  rejectGeneratorForm.reason = ''
+  showGeneratorRejectModal.value = true
+}
+
+const handleGeneratorReject = async () => {
+  if (!rejectGeneratorForm.reason.trim()) {
+    ElMessage.warning('请输入驳回理由')
+    return
+  }
+  
+  rejectGeneratorLoading.value = true
+  try {
+    const row = pendingGenerators.value.find(g => g.id === currentRejectGeneratorId.value)
+    await handleGeneratorAudit(row, 'REJECTED', rejectGeneratorForm.reason.trim())
+  } finally {
+    rejectGeneratorLoading.value = false
   }
 }
 

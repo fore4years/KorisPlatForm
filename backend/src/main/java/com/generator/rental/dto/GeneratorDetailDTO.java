@@ -19,9 +19,12 @@ public class GeneratorDetailDTO {
     private BigDecimal deposit;
     private String deliveryMethod;
     private String imageUrl;
+    private String proofOfOwnershipUrl;
     private String description;
     private String address;
     private Generator.StockStatus stockStatus;
+    private Generator.AuditStatus auditStatus;
+    private String rejectionReason;
     
     private MerchantInfo merchant;
     private List<ReviewDTO> reviews;

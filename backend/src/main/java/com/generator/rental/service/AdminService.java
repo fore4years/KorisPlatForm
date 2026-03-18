@@ -23,4 +23,8 @@ public interface AdminService {
     List<PlatformConfig> getAllConfigs();
     void updateConfig(String key, String value);
     void initConfigs();
+
+    // Equipment Audit
+    List<com.generator.rental.entity.Generator> getPendingGenerators();
+    void auditGenerator(Long generatorId, com.generator.rental.entity.Generator.AuditStatus status, String reason);
 }

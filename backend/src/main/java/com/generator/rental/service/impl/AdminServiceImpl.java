@@ -3,9 +3,11 @@ package com.generator.rental.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.generator.rental.dto.AuditRequest;
 import com.generator.rental.dto.MerchantApplicationResponse;
+import com.generator.rental.entity.Generator;
 import com.generator.rental.entity.MerchantApplication;
 import com.generator.rental.entity.PlatformConfig;
 import com.generator.rental.entity.User;
+import com.generator.rental.mapper.GeneratorMapper;
 import com.generator.rental.mapper.MerchantApplicationMapper;
 import com.generator.rental.mapper.PlatformConfigMapper;
 import com.generator.rental.mapper.UserMapper;
@@ -30,6 +32,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private PlatformConfigMapper configMapper;
+
+    @Autowired
+    private GeneratorMapper generatorMapper;
 
     @Override
     public List<User> getPendingMerchants() {
@@ -164,5 +169,21 @@ public class AdminServiceImpl implements AdminService {
         }
         response.setCreatedAt(app.getCreateTime());
         return response;
+    }
+
+    @Override
+    public List<Generator> getPendingGenerators() {
+        return generatorMapper.selectList(new LambdaQueryWrapper<Generator>()
+                .eq(Generator::getAuditStatus, Generator.AuditStatus.PENDING));
+    }
+
+    @Override
+    public void auditGenerator(Long generatorId, Generator.AuditStatus status, String reason) {
+        Generator generator = generatorMapper.selectById(generatorId);
+        if (generator == null) throw new RuntimeException("Generator not found");
+        
+        generator.setAuditStatus(status);
+        generator.setRejectionReason(reason);
+        generatorMapper.updateById(generator);
     }
 }

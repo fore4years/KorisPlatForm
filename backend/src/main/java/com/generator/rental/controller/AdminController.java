@@ -154,4 +154,31 @@ public class AdminController {
         adminService.updateConfig(payload.get("key"), payload.get("value"));
         return Result.success();
     }
+
+    // --- Generator Audit ---
+
+    /**
+     * 获取待审核发电机列表
+     *
+     * @return 待审核发电机列表
+     */
+    @GetMapping("/generators/pending")
+    public Result<List<Generator>> getPendingGenerators() {
+        return Result.success(adminService.getPendingGenerators());
+    }
+
+    /**
+     * 审核发电机
+     *
+     * @param id 发电机ID
+     * @param payload 包含 status 和 reason 的 Map
+     * @return 空响应
+     */
+    @PostMapping("/generators/{id}/audit")
+    public Result<Void> auditGenerator(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        Generator.AuditStatus status = Generator.AuditStatus.valueOf(payload.get("status"));
+        String reason = payload.get("reason");
+        adminService.auditGenerator(id, status, reason);
+        return Result.success();
+    }
 }

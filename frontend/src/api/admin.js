@@ -45,6 +45,15 @@ export const updateConfig = (key, value) => {
   return request.post('/admin/config/update', { key, value })
 }
 
+// --- Generator Audit ---
+export const getPendingGenerators = () => {
+  return request.get('/admin/generators/pending')
+}
+
+export const auditGenerator = (id, status, reason) => {
+  return request.post(`/admin/generators/${id}/audit`, { status, reason })
+}
+
 // --- Complaints (Note: Different Controller URL) ---
 export const getAllComplaints = () => {
   return request.get('/complaints/admin/all')

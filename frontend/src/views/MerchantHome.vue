@@ -53,6 +53,18 @@
                     </el-tag>
                   </template>
                 </el-table-column>
+                <el-table-column label="审核状态" width="120" align="center">
+                  <template #default="scope">
+                    <el-tooltip v-if="scope.row.auditStatus === 'REJECTED'" :content="scope.row.rejectionReason" placement="top">
+                      <el-tag type="danger" effect="light" size="small">
+                        已驳回 <el-icon><InfoFilled /></el-icon>
+                      </el-tag>
+                    </el-tooltip>
+                    <el-tag v-else :type="getAuditStatusType(scope.row.auditStatus)" effect="light" size="small">
+                      {{ formatAuditStatus(scope.row.auditStatus) }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                   <template #default="scope">
                     <el-button size="small" link type="primary" @click="openDeviceModal(scope.row)">编辑</el-button>
@@ -244,6 +256,10 @@
           <el-form-item label="图片" required>
             <UploadImage v-model="deviceForm.imageUrl" type="product" :multiple="true" :limit="5" :max-count="5" />
           </el-form-item>
+          <el-form-item label="权属证明" required>
+            <UploadImage v-model="deviceForm.proofOfOwnershipUrl" type="cert" :multiple="false" />
+            <div class="form-tip">请上传发票、合格证或权属证明文件</div>
+          </el-form-item>
           <el-form-item label="描述">
             <el-input v-model="deviceForm.description" type="textarea" :rows="3" />
           </el-form-item>
@@ -293,7 +309,7 @@ import { useRouter } from 'vue-router'
 import { getMyGenerators, createGenerator, updateGenerator, deleteGenerator } from '../api/generator'
 import { getMerchantOrders, getMerchantCustomers, getCustomerOrderHistory } from '../api/order'
 import { ElMessage } from 'element-plus'
-import { Plus, Search } from '@element-plus/icons-vue'
+import { Plus, Search, InfoFilled } from '@element-plus/icons-vue'
 import UploadImage from '../components/UploadImage.vue'
 import ThemeToggle from '../components/ThemeToggle.vue'
 import { computed } from 'vue'
@@ -344,6 +360,7 @@ const deviceForm = reactive({
   deposit: 0,
   stockStatus: 'AVAILABLE',
   imageUrl: '',
+  proofOfOwnershipUrl: '',
   description: '',
   deliveryMethod: 'Seller Delivery',
   deliveryRange: 50,
@@ -442,6 +459,7 @@ const openDeviceModal = (device) => {
     deviceForm.deposit = 0
     deviceForm.stockStatus = 'AVAILABLE'
     deviceForm.imageUrl = ''
+    deviceForm.proofOfOwnershipUrl = ''
     deviceForm.description = ''
     deviceForm.deliveryMethod = 'Seller Delivery'
     deviceForm.deliveryRange = 50
@@ -530,6 +548,21 @@ const formatStockStatus = (status) => {
     'AVAILABLE': '可租',
     'RENTED': '已租',
     'MAINTENANCE': '维护中'
+  }
+  return map[status] || status
+}
+
+const getAuditStatusType = (status) => {
+  if (status === 'APPROVED') return 'success'
+  if (status === 'REJECTED') return 'danger'
+  return 'info'
+}
+
+const formatAuditStatus = (status) => {
+  const map = {
+    'PENDING': '审核中',
+    'APPROVED': '已通过',
+    'REJECTED': '已驳回'
   }
   return map[status] || status
 }

@@ -51,7 +51,8 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
             queryWrapper.like(Generator::getAddress, request.getLocation());
         }
         
-        // Only show available stock
+        // Only show approved and available stock
+        queryWrapper.eq(Generator::getAuditStatus, Generator.AuditStatus.APPROVED);
         queryWrapper.eq(Generator::getStockStatus, Generator.StockStatus.AVAILABLE);
 
         // Sort

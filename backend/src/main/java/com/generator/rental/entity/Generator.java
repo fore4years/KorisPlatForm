@@ -35,7 +35,10 @@ public class Generator extends BaseEntity {
     private Integer deliveryRange; // in km
     private BigDecimal deliveryFee;
     private String imageUrl;
+    private String proofOfOwnershipUrl; // 权属证明
     private StockStatus stockStatus = StockStatus.AVAILABLE;
+    private AuditStatus auditStatus = AuditStatus.PENDING;
+    private String rejectionReason;
     private String description;
     
     private String address;
@@ -44,5 +47,9 @@ public class Generator extends BaseEntity {
 
     public enum StockStatus {
         AVAILABLE, RENTED, MAINTENANCE
+    }
+
+    public enum AuditStatus {
+        PENDING, APPROVED, REJECTED
     }
 }

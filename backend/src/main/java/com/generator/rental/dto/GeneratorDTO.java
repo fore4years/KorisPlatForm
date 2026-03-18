@@ -17,6 +17,8 @@ public class GeneratorDTO {
     private Integer deliveryRange;
     private BigDecimal deliveryFee;
     private Generator.StockStatus stockStatus;
+    private Generator.AuditStatus auditStatus;
+    private String rejectionReason;
     private Double distance; // Calculated distance
     private Double averageRating;
 }
