@@ -54,7 +54,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         LocalDateTime start = LocalDateTime.parse(startTimeStr, DateTimeFormatter.ISO_DATE_TIME);
         LocalDateTime end = LocalDateTime.parse(endTimeStr, DateTimeFormatter.ISO_DATE_TIME);
-        
+
         long days = ChronoUnit.DAYS.between(start, end);
         if (days <= 0) days = 1;
 
@@ -92,7 +92,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public OrderResponse createOrder(OrderRequest request, String tenantId) {
         Generator generator = generatorMapper.selectById(request.getGeneratorId());
         if (generator == null) throw new RuntimeException("发电机不存在");
-        
+
         if (generator.getStockStatus() != Generator.StockStatus.AVAILABLE) {
             throw new RuntimeException("发电机不可用");
         }
@@ -101,8 +101,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (tenant == null) throw new RuntimeException("租户不存在");
 
         PriceCalculationResponse price = calculatePrice(
-                request.getGeneratorId(), 
-                request.getStartTime().format(DateTimeFormatter.ISO_DATE_TIME), 
+                request.getGeneratorId(),
+                request.getStartTime().format(DateTimeFormatter.ISO_DATE_TIME),
                 request.getEndTime().format(DateTimeFormatter.ISO_DATE_TIME)
         );
 
@@ -122,18 +122,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         if (request.getPaymentMethod() == Order.PaymentMethod.ONLINE) {
             order.setPaymentStatus(Order.PaymentStatus.PENDING);
-            order.setStatus(Order.Status.WAIT_PAY); 
+            order.setStatus(Order.Status.WAIT_PAY);
         } else {
             order.setPaymentStatus(Order.PaymentStatus.PENDING);
             order.setStatus(Order.Status.WAIT_CONFIRM);
         }
 
         save(order);
-        
+
         // Populate transient fields for response
         order.setGenerator(generator);
         order.setTenant(tenant);
-        
+
         return convertToResponse(order);
     }
 
@@ -141,14 +141,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public OrderResponse confirmOrder(Long orderId) {
         Order order = getById(orderId);
         if (order == null) throw new RuntimeException("订单不存在");
-        
+
         if (order.getStatus() != Order.Status.WAIT_CONFIRM) {
             throw new RuntimeException("订单状态不是待确认");
         }
 
         order.setStatus(Order.Status.CONFIRMED);
         updateById(order);
-        
+
         contractService.generateContract(orderId);
 
         return convertToResponse(order);
@@ -158,10 +158,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public OrderResponse updateDelivery(Long orderId, String deliveryType) {
         Order order = getById(orderId);
         if (order == null) throw new RuntimeException("订单不存在");
-        
+
         Contract contract = contractMapper.selectOne(new LambdaQueryWrapper<Contract>().eq(Contract::getOrderId, orderId));
         if (contract == null) throw new RuntimeException("合同不存在");
-        
+
         if (!Boolean.TRUE.equals(contract.getTenantSigned()) || !Boolean.TRUE.equals(contract.getMerchantSigned())) {
             throw new RuntimeException("双方必须签署合同后才能交付");
         }
@@ -176,7 +176,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public OrderResponse uploadDeliveryEvidence(Long orderId, String evidenceUrl) {
         Order order = getById(orderId);
         if (order == null) throw new RuntimeException("Order not found");
-        
+
         order.setDeliveryEvidenceUrl(evidenceUrl);
         order.setStatus(Order.Status.RENTING);
         updateById(order);
@@ -216,15 +216,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (order.getStatus() != Order.Status.RENTING) {
             throw new RuntimeException("订单不在租赁中");
         }
-        
+
         order.setStatus(Order.Status.COMPLETED);
-        
+
         Generator gen = generatorMapper.selectById(order.getGeneratorId());
         if (gen != null) {
             gen.setStockStatus(Generator.StockStatus.AVAILABLE);
             generatorMapper.updateById(gen);
         }
-        
+
         updateById(order);
         return convertToResponse(order);
     }
@@ -233,20 +233,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public OrderResponse confirmReturn(Long orderId, BigDecimal deductionAmount, String comment) {
         Order order = getById(orderId);
         if (order == null) throw new RuntimeException("订单不存在");
-        
+
         BigDecimal deposit = order.getDepositAmount();
         BigDecimal refund = deposit.subtract(deductionAmount != null ? deductionAmount : BigDecimal.ZERO);
-        
+
         order.setDeductionAmount(deductionAmount);
         order.setRefundAmount(refund);
         order.setStatus(Order.Status.COMPLETED);
-        
+
         Generator gen = generatorMapper.selectById(order.getGeneratorId());
         if (gen != null) {
             gen.setStockStatus(Generator.StockStatus.AVAILABLE);
             generatorMapper.updateById(gen);
         }
-        
+
         updateById(order);
         return convertToResponse(order);
     }
@@ -255,11 +255,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public OrderResponse confirmReceipt(Long orderId) {
         Order order = getById(orderId);
         if (order == null) throw new RuntimeException("Order not found");
-        
+
         if (order.getStatus() != Order.Status.DELIVERED) {
             throw new RuntimeException("Order status is not DELIVERED");
         }
-        
+
         order.setStatus(Order.Status.RENTING);
         updateById(order);
         return convertToResponse(order);
@@ -272,10 +272,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 获取该商家的所有订单
         List<Order> orders = list(new LambdaQueryWrapper<Order>().eq(Order::getMerchantId, merchant.getId()));
-        
+
         // 按租户 ID 分组聚合
         Map<Long, com.generator.rental.dto.MerchantCustomerDTO> customerMap = new HashMap<>();
-        
+
         for (Order order : orders) {
             Long tenantId = order.getTenantId();
             com.generator.rental.dto.MerchantCustomerDTO dto = customerMap.computeIfAbsent(tenantId, id -> {
@@ -291,14 +291,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 newDto.setCreditStatus("良好"); // 默认信用良好
                 return newDto;
             });
-            
+
             dto.setTotalOrders(dto.getTotalOrders() + 1);
             dto.setTotalAmount(dto.getTotalAmount().add(order.getTotalAmount()));
             if (dto.getLastOrderTime() == null || order.getCreateTime().isAfter(dto.getLastOrderTime())) {
                 dto.setLastOrderTime(order.getCreateTime());
             }
         }
-        
+
         return new ArrayList<>(customerMap.values());
     }
 
@@ -311,14 +311,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .eq(Order::getMerchantId, merchant.getId())
                 .eq(Order::getTenantId, tenantId)
                 .orderByDesc(Order::getCreateTime));
-                
+
         return orders.stream().map(this::convertToResponse).collect(Collectors.toList());
     }
 
     private OrderResponse convertToResponse(Order order) {
         OrderResponse response = new OrderResponse();
         BeanUtils.copyProperties(order, response);
-        
+
         // Populate Generator Info
         if (order.getGenerator() == null) {
             Generator gen = generatorMapper.selectById(order.getGeneratorId());
@@ -329,9 +329,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         } else {
             response.setGeneratorName(order.getGenerator().getName());
         }
-        
+
         // Populate User Info if needed (optional based on DTO)
-        
+
         response.setCreatedAt(order.getCreateTime());
         return response;
     }

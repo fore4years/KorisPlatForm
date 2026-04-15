@@ -4,6 +4,7 @@ import com.generator.rental.common.Result;
 import com.generator.rental.dto.AuditRequest;
 import com.generator.rental.dto.MerchantApplicationResponse;
 import com.generator.rental.dto.StatisticsDTO;
+import com.generator.rental.entity.Generator;
 import com.generator.rental.entity.PlatformConfig;
 import com.generator.rental.entity.User;
 import com.generator.rental.service.AdminService;

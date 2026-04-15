@@ -39,6 +39,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private static final String FORGOT_PASSWORD_PREFIX = "forgot_password:";
     private static final String AUTH_TOKEN_PREFIX = "auth:token:";
 
+    /**
+     * 用户注册
+     * @param request
+     * @return
+     */
     @Override
     public UserResponse register(RegisterRequest request) {
         if (count(new LambdaQueryWrapper<User>().eq(User::getUsername, request.getUsername())) > 0) {
@@ -62,6 +67,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return response;
     }
 
+    /**
+     * 用户登录
+     * @param request
+     * @return
+     */
     @Override
     public UserResponse login(LoginRequest request) {
         User user = getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, request.getUsername()));
