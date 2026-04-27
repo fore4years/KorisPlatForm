@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -33,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        
+
         String authHeader = request.getHeader("Authorization");
         String token = null;
 
@@ -45,11 +47,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Object userIdObj = redisTemplate.opsForValue().get(AUTH_TOKEN_PREFIX + token);
+//            Object userIdObj = redisTemplate.opsForValue().get(AUTH_TOKEN_PREFIX + token);
+            Object userIdObj = null;
+            try {
+                userIdObj = redisTemplate.opsForValue().get(AUTH_TOKEN_PREFIX + token);
+            } catch (Exception e) {
+                log.error("Redis 连接异常，跳过检验：{}", e.getMessage());
+            }
             if (userIdObj != null) {
                 Long userId = Long.valueOf(userIdObj.toString());
                 User user = userMapper.selectById(userId);
-                
+
                 if (user != null && user.getStatus() == User.Status.ACTIVE) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             user, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))

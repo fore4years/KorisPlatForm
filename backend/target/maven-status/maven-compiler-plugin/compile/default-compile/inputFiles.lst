@@ -56,6 +56,7 @@ C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\service\i
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\entity\RepairRequest.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\service\impl\AdminServiceImpl.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\dto\UserUpdateRequest.java
+C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\config\JwtAuthenticationFilter.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\GeneratorRentalApplication.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\dto\MerchantApplicationResponse.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\entity\Generator.java
@@ -74,6 +75,7 @@ C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\config\We
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\service\AlipayService.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\entity\Order.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\dto\RegisterRequest.java
+C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\dto\MerchantCustomerDTO.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\utils\RedisUtils.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\service\ContractService.java
 C:\Users\asus\Desktop\final\backend\src\main\java\com\generator\rental\controller\ComplaintController.java
